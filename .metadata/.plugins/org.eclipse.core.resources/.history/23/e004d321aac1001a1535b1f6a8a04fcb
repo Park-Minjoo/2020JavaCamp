@@ -1,0 +1,200 @@
+import java.awt.*;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+
+public class Main extends JFrame {
+
+	static JScrollPane scrollPane;
+	static boolean refereeB = false;
+	static boolean turnB = true;
+	JPanel panelPan;
+	BufferedImage panImg;
+	BufferedImage background;
+	BufferedImage timeOver;
+	boolean buttonS = false;
+	public static Ai[][] win = new Ai[20][20];
+	static int count = 16;
+	static Timer t;
+	/**
+	 * @wbp.nonvisual location=480,301
+	 */
+	private final JLabel timer = new JLabel(" ");
+	private final JLabel timerName = new JLabel("TIMER"); // 타이머이름 띄우는 라벨
+	static JLabel whoseTurn = new JLabel(" "); // 누구 차례인지 알려주는 라벨
+
+	public Main() {
+		getContentPane().setBackground(new Color(119, 136, 153)); // 전체 백그라운드
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		try {
+			background = ImageIO.read(new File("/Users/minjoo/Desktop/eclipse-workspace/Carcass/cc.png"));
+			timeOver = ImageIO.read(new File("/Users/minjoo/Desktop/eclipse-workspace/Carcass/timeover.png"));
+		} catch (IOException e1) {
+//			 TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		getContentPane().setLayout(null);
+
+		// 라벨 위치 조정
+		timer.setBounds(850, 150, 130, 40);
+		timerName.setBounds(845, 120, 130, 40);
+		whoseTurn.setBounds(800, 600, 200, 40);
+
+		whoseTurn.setFont(new Font("Bradley Hand", Font.BOLD, 20));
+		whoseTurn.setForeground(new Color(250, 150, 122));
+
+		// 패널에 add
+		getContentPane().add(timer);
+		getContentPane().add(timerName);
+		getContentPane().add(whoseTurn);
+
+		//
+		t = new Timer(1000, new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				count--;
+				timer.setFont(new Font("Serif", Font.BOLD, 20));
+				timer.setForeground(Color.BLACK);
+				timer.setText(String.valueOf(count));
+
+				if (count >= 1 && count <= 5) // 5초 남으면 색깔 바뀌도록
+					timer.setForeground(Color.RED);
+				timer.setFont(new Font("Serif", Font.BOLD, 30));
+				if (count == 0) { // 0이면 끝났다는 이미지 출력
+					JFrame lateFrame = new JFrame() {
+						public void paint(Graphics g) {
+							super.paint(g);
+							Graphics2D g2 = (Graphics2D) g;
+							g2.drawImage(timeOver, 0, 20, 300, 300, null);
+						}
+					};
+
+					// 타이머의 시간 초과를 알려주는 프레임의 위치 조정
+					lateFrame.setSize(300, 300);
+					lateFrame.setLocation(730, 380);
+//					lateFrame.setBackground(new Color(119, 136, 153));
+					lateFrame.setVisible(true);
+					lateFrame.repaint();
+					t.stop();
+				}
+			}
+		});
+
+		// 적돌 버튼 (심판)
+		JButton redDol = new JButton("Referee");
+		redDol.setBounds(800, 200, 130, 40);
+		redDol.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				turnB = false;
+				refereeB = true;
+			}
+		});
+		getContentPane().add(redDol);
+		// 게임시작하는 버튼
+		JButton gStart = new JButton("Game Start");
+		gStart.setBounds(800, 250, 130, 40);
+		gStart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				t.start();
+				refereeB = false;
+				turnB = true;
+			}
+		});
+		getContentPane().add(gStart);
+
+		// 이걸로 인공지능과 대결
+		JButton ai = new JButton("Game with AI");
+		ai.setBounds(800, 300, 130, 40);
+		ai.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				t.start();
+				refereeB = false;
+				turnB = true;
+				Ai.robotClass();
+			}
+		});
+		getContentPane().add(ai);
+
+		JButton startB = new JButton("Can We Start?");
+		startB.setBounds(550, 50, 130, 50);
+
+		startB.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				buttonS = true;
+				// 바둑판 생성
+				panelPan.setVisible(true);
+				badookPan();
+			}
+		});
+		getContentPane().add(startB); // 스타트버튼 생성
+
+		panelPan = new JPanel() {
+			public void paintComponent(Graphics g) {
+
+				if (buttonS) {
+					g.drawImage(panImg, 10, -30, 480, 500, null);
+					for (int i = 1; i <= 19; i++) {
+						g.drawLine(25, 25 * i - 15, 500 - 25, 25 * i - 15);
+						g.drawLine(25 * i, 25 - 15, 25 * i, 25 * 19 - 15);
+					}
+					for (int j = 0; j < 3; j++) {
+						g.fillOval(25 * 4 - 4, 25 * (4 + j * 6) - 4 - 15, 8, 8);
+						g.fillOval(25 * 10 - 4, 25 * (4 + j * 6) - 4 - 15, 8, 8);
+						g.fillOval(25 * 16 - 4, 25 * (4 + j * 6) - 4 - 15, 8, 8);
+					}
+				}
+			}
+		};
+		panelPan.setBounds(80, 130, 500, 500); // 바둑판의 위치
+		panelPan.setLayout(null); // 절대 위치로 지정
+		panelPan.setVisible(false); // 보여줄 것인가?
+		// panelPan.addMouseListener(new Can(0, 0));
+
+	}
+
+	// 바둑판
+	public void badookPan() {
+		// 각각의 라벨을 넣을 배열을 불러오기
+		Ai[][] board = new Ai[19][19];
+		try {
+			panImg = ImageIO.read(new File("/Users/minjoo/Desktop/eclipse-workspace/Carcass/blue.jpg"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} // 이미지 경로
+		getContentPane().add(panelPan);
+		repaint();
+
+		// 값 넣어주기
+		for (int i = 0; i < 19; i++) {
+			for (int j = 0; j < 19; j++) {
+				board[i][j] = new Ai(i, j);
+				panelPan.add(board[i][j]);
+			}
+		}
+		win = board;
+
+	}
+
+	// 배경 이미지
+	public void paint(Graphics g) {
+		g.drawImage(background, 0, 0, getWidth(), getHeight(), null);
+		super.paint(g);
+	}
+
+	// 메인
+	public static void main(String[] args) {
+		
+		Main test = new Main();
+		// JFrame mainFrame = new JFrame("민주 프레임~");
+		Dimension dim = new Dimension(1100, 700);
+		test.setLocation(20, 10);
+		test.setPreferredSize(dim);
+		test.pack();
+		test.setVisible(true);
+		
+
+	}
+
+}

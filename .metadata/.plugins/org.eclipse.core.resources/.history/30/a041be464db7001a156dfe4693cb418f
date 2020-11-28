@@ -1,0 +1,73 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.Vector;
+
+public class LineDrawEx extends JFrame {
+    int option = LINE;
+    public static final int LINE = 1;
+    
+	public LineDrawEx(){
+		setContentPane(new MyPanel());
+		setSize(900, 600);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		JButton btnNewButton = new JButton("New button");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				option = LINE;
+			}
+		});
+		getContentPane().add(btnNewButton, BorderLayout.NORTH);
+		
+		JButton btnNewButton_1 = new JButton("New button");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+			}
+		});
+		getContentPane().add(btnNewButton_1, BorderLayout.WEST);
+		
+		JButton btnNewButton_2 = new JButton("New button");
+		getContentPane().add(btnNewButton_2, BorderLayout.SOUTH);
+		setVisible(true);
+	}
+	
+	class MyPanel extends JPanel{
+		Vector<Point> sv = new Vector<Point>(); // 시작
+		Vector<Point> se = new Vector<Point>(); // 끝점
+		
+		public MyPanel(){
+			this.addMouseListener(new MyMouseListener()); // 리스너
+		}
+		
+		public void paintComponent(Graphics g){
+			super.paintComponent(g); // 부모 페인트호출
+			
+			if(option == LINE) {
+			if(sv.size() == 0) // 벡터에 암것도없으면 리턴
+				return;
+			
+			for(int i=0;i<sv.size();i++){ //벡터크기만큼
+				Point sp = sv.get(i); // 벡터값을꺼내다
+				Point ep = se.get(i);	
+				g.drawLine(sp.x, sp.y, ep.x, ep.y);//그리다
+				}
+			}
+		}
+		
+		class MyMouseListener extends MouseAdapter{
+			public void mousePressed(MouseEvent e){
+				sv.add(e.getPoint()); // 클릭한부분을 시작점으로
+			}
+			public void mouseReleased(MouseEvent e){
+				se.add(e.getPoint()); // 드래그 한부분을 종료점으로
+				repaint(); // 다시그려라
+			}
+		}
+	}
+	
+	public static void main(String[] args) {
+		new LineDrawEx();
+	}
+}

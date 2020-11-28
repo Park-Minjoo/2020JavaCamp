@@ -1,0 +1,9 @@
+
+public class Robot {
+
+	public void mouseMove(int i, int j) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

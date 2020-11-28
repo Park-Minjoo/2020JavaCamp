@@ -1,0 +1,185 @@
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.Timer;
+
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.awt.event.ActionEvent;
+import javax.swing.JPanel;
+
+public class Main extends JFrame {
+	static JScrollPane scrollPane;
+	ImageIcon icon;
+	static boolean refereeB = false;
+	static boolean turnB = true;
+	JPanel panelPan;
+	BufferedImage panImg;
+	BufferedImage background;
+	boolean buttonS = false;
+	public static Can[][] win = new Can[20][20];
+	static int count = 16;
+	Timer t;
+	/**
+	 * @wbp.nonvisual location=480,301
+	 */
+	private final JLabel timer = new JLabel(" ");
+	private final JLabel timerName = new JLabel("TIMER");
+	public Main() {
+		getContentPane().setBackground(new Color(119, 136, 153));
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		try {
+			background = ImageIO.read(new File("/Users/minjoo/Desktop/eclipse-workspace/Carcass/cc.png"));
+
+		} catch (IOException e1) {
+//			 TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		getContentPane().setLayout(null);
+		timer.setBounds(850, 150, 130, 40);
+		timerName.setBounds(845, 120, 130, 40);
+		getContentPane().add(timer);
+		getContentPane().add(timerName);
+		t = new Timer(1000, new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				count--;
+				timer.setFont(new Font("Serif", Font.BOLD, 20));
+				timer.setForeground(Color.BLACK);
+				timer.setText(String.valueOf(count));
+				if(count >= 1 && count <= 5)
+					timer.setForeground(Color.RED);
+					timer.setFont(new Font("Serif", Font.BOLD, 30));
+				if(count == 1) {
+					count = 16;
+					
+				}
+			}
+		});
+		
+		JButton redDol = new JButton("Referee");
+		redDol.setBounds(800, 200, 130, 40);
+		redDol.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+//				System.out.println("referee"+refereeB);
+				/*if(refereeB) refereeB = false;
+				else*/ turnB = false; refereeB = true;
+			} 
+		});
+		getContentPane().add(redDol);
+		JButton turn = new JButton("Game Start");
+		turn.setBounds(800, 250, 130, 40);
+		turn.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.out.println("turn"+turnB);
+//				if(turnB) turnB = false;
+//				else { refereeB = false; turnB = true;}
+				t.start();
+				refereeB = false;
+				turnB = true;
+			}
+		});
+		getContentPane().add(turn);
+
+		JButton startB = new JButton("Can We Start?");
+		startB.setBounds(550, 50, 130, 50);
+
+		startB.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				buttonS = true;
+				// 바둑판 생성
+				panelPan.setVisible(true);
+				
+				badookPan();
+			}
+		});
+		panelPan = new JPanel() {
+			public void paintComponent(Graphics g) {
+
+				if (buttonS) {
+					g.drawImage(panImg, 10, -30, 480, 500, null);
+					for (int i = 1; i <= 19; i++) {
+						g.drawLine(25, 25 * i - 15, 500 - 25, 25 * i - 15);
+						g.drawLine(25 * i, 25 - 15, 25 * i, 25 * 19 - 15);
+					}
+					for (int j = 0; j < 3; j++) {
+						g.fillOval(25 * 4 - 4, 25 * (4 + j * 6) - 4 -15, 8, 8);
+						g.fillOval(25 * 10 - 4, 25 * (4 + j * 6) - 4 -15, 8, 8);
+						g.fillOval(25 * 16 - 4, 25 * (4 + j * 6) - 4 -15, 8, 8);
+					}
+				}
+			}
+		};
+		panelPan.setBounds(80, 130, 500, 500);
+		panelPan.setLayout(null);
+		panelPan.setVisible(false);
+		//panelPan.addMouseListener(new Can(0, 0));
+		getContentPane().add(startB);
+
+	}
+
+	public void badookPan() {
+		Can[][] board = new Can[19][19];
+		try {
+			panImg = ImageIO.read(new File("/Users/minjoo/Desktop/eclipse-workspace/Carcass/blue.jpg"));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} // 이미지 경로
+		getContentPane().add(panelPan);
+		repaint();
+
+		for (int i = 0; i < 19; i++) {
+			for (int j = 0; j < 19; j++) {
+				board[i][j] = new Can(i, j);
+				panelPan.add(board[i][j]);
+			}
+		}
+		win = board;
+
+	}
+
+	public void gameWin() {
+		for (int i = 0; i < 19; i++) {
+			for (int j = 0; j < 19; j++) {
+			}
+		}
+	}
+
+	public void paint(Graphics g) {
+		
+//		try {
+			g.drawImage(background, 0, 0, getWidth(), getHeight(), null);
+//			Thread.sleep(3000);
+//		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		super.paint(g);
+
+	}
+
+//	public void paintComponent(Graphics g) {
+//		super.paintComponents(g);
+//	}
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Main test = new Main();
+		// JFrame mainFrame = new JFrame("민주 프레임~");
+		Dimension dim = new Dimension(1400, 800);
+		test.setLocation(20, 10);
+		test.setPreferredSize(dim);
+		test.pack();
+		test.setVisible(true);
+	}
+
+}

@@ -1,0 +1,19 @@
+package image;
+
+// 돌이 4개냐?
+// 2개를 둔다 
+public class fourBlock {
+	int fourC = 0;
+	public fourBlock() {
+		
+	if(fourC == 1) { // 흑돌의 연결이 4개인 경우 
+		//흰돌을 양쪽에 둔다. 
+     }else if(fourC == 2) { // 흰돌의 연결이 4개인 경우 
+    	 //검은돌을 양쪽에 둔다. 
+     }
+	public static void setWinner(int four) {
+		// TODO Auto-generated method stub
+		fourC = four;
+	}
+}
+

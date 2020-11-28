@@ -1,0 +1,70 @@
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.SwingConstants;
+
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+
+public class choiceRock extends JFrame {
+   public choiceRock() {
+      getContentPane().setLayout(null);
+      getContentPane().setBackground(Color.black);
+      
+      setSize(307,238);
+      setLocation(500,400);
+      
+      JLabel lblNewLabel_2 = new JLabel("돌을 선택하세요");
+      lblNewLabel_2.setForeground(Color.WHITE);
+      lblNewLabel_2.setFont(new Font("굴림", Font.BOLD, 18));
+      lblNewLabel_2.setHorizontalAlignment(SwingConstants.CENTER);
+      lblNewLabel_2.setBounds(36, 42, 216, 40);
+      getContentPane().add(lblNewLabel_2);
+      
+      JButton btnNewButton = new JButton(new ImageIcon(Main.class.getResource("black.png")));
+      btnNewButton.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+         }
+      });
+      btnNewButton.setBackground(Color.black);
+      btnNewButton.setBorderPainted(false);
+      btnNewButton.setFocusable(false);
+      btnNewButton.setOpaque(true);
+      btnNewButton.setBounds(77, 105, 40, 40);
+      getContentPane().add(btnNewButton);
+      btnNewButton.addActionListener(new ActionListener() {
+
+         @Override
+         public void actionPerformed(ActionEvent e) {
+            // TODO Auto-generated method stub
+            Frame.setRockChoice(1);
+            Main.getChoiceFrame().dispose();
+         }
+         
+      });
+      
+      JButton btnNewButton_1 = new JButton(new ImageIcon(Main.class.getResource("white.png")));
+      btnNewButton_1.setBackground(Color.black);
+      btnNewButton_1.setBorderPainted(false);
+      btnNewButton_1.setFocusable(false);
+      btnNewButton_1.setOpaque(true);
+      btnNewButton_1.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent e) {
+            Frame.setRockChoice(2);
+            Main.getChoiceFrame().dispose();
+         }
+      });
+      btnNewButton_1.setBounds(174, 105, 40, 40);
+      getContentPane().add(btnNewButton_1);
+      
+      JLabel label = new JLabel("선 공격: 흑");
+      label.setForeground(Color.WHITE);
+      label.setFont(new Font("굴림", Font.BOLD, 11));
+      label.setHorizontalAlignment(SwingConstants.CENTER);
+      label.setBounds(120, 155, 57, 15);
+      getContentPane().add(label);
+   }
+}

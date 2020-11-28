@@ -1,0 +1,203 @@
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.Vector;
+
+public class LineDrawEx extends JFrame {
+	int option = LINE;
+	public static final int LINE = 1;
+	public static final int RECT = 2;
+	public static final int CIRCLE = 2;
+
+	public LineDrawEx() {
+		setContentPane(new MyPanel());
+		setSize(900, 600);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		getContentPane().setLayout(null);
+
+		JToolBar toolBar = new JToolBar();
+		toolBar.setBounds(0, 0, 900, 60);
+		getContentPane().add(toolBar);
+
+		JButton Line = new JButton("Line");
+		toolBar.add(Line);
+		Line.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				option = LINE;
+			}
+		});
+
+		JButton Rect = new JButton("Rectangular");
+		toolBar.add(Rect);
+		Rect.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				option = RECT;
+			}
+		});
+
+		JButton Circle = new JButton("Circle");
+		toolBar.add(Circle);
+		Rect.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				option = CIRCLE;
+			}
+		});
+
+		setVisible(true);
+	}
+
+	class MyPanel extends JPanel {
+		Point startP = null;
+		Point endP = null;
+		int width, height;
+
+		Vector<Point> sv = new Vector<Point>(); // line시작
+		Vector<Point> se = new Vector<Point>(); // line끝점
+		Vector<Point> sv1 = new Vector<Point>(); // Rect 시작
+		Vector<Point> se1 = new Vector<Point>(); // Rect 끝점
+		Vector<Point> sv2 = new Vector<Point>(); // Circle 시작
+		Vector<Point> se2 = new Vector<Point>(); // Circle 끝점
+		Vector<Integer> mode = new Vector<Integer>(); // shape
+
+		public MyPanel() {
+			MyMouseListener ml = new MyMouseListener();
+
+			this.addMouseListener(new MyMouseListener()); // 리스너
+			this.addMouseMotionListener(ml);
+		}
+
+		public void paintComponent(Graphics g) {
+			super.paintComponent(g); // 부모 페인트호출
+//			1)for문을만든다 
+//			2) 안에 vector값 3개를가쟈온다.
+//			3) if문을써서 모드값에 따라 drawRect와 line을따로 부른다.
+			
+//line
+			if (option == LINE) {
+				if (sv.size() != 0) {
+					for (int i = 0; i < se.size(); i++) { // 벡터크기만큼
+						Point sp = sv.get(i); // 벡터값을꺼내다
+						Point ep = se.get(i);
+						g.drawLine(sp.x, sp.y, ep.x, ep.y);// 그리다
+					}
+				}
+				if (sv1.size() != 0) {
+					for (int i = 0; i < se1.size(); i++) { // 벡터크기만큼
+						Point sp = sv1.get(i); // 벡터값을꺼내다
+						Point ep = se1.get(i);
+						int width = Math.abs(ep.x - sp.x);
+						int height = Math.abs(ep.y - sp.y);
+						sp.x = Math.min(ep.x, sp.x);
+						sp.y = Math.min(ep.y, sp.y);
+						g.drawRect(sp.x, sp.y, width, height);// 그리다
+					}
+				}
+				if (startP != null)
+					g.drawLine(startP.x, startP.y, endP.x, endP.y);
+			}
+			
+//rect
+			if (option == RECT) {
+				if (sv.size() != 0) {
+					for (int i = 0; i < se.size(); i++) { // 벡터크기만큼
+						Point sp = sv.get(i); // 벡터값을꺼내다
+						Point ep = se.get(i);
+						g.drawLine(sp.x, sp.y, ep.x, ep.y);// 그리다
+					}
+				}
+
+				if (sv1.size() != 0) {
+					for (int i = 0; i < se1.size(); i++) { // 벡터크기만큼
+						Point sp = sv1.get(i); // 벡터값을꺼내다
+						Point ep = se1.get(i);
+						int width = Math.abs(ep.x - sp.x);
+						int height = Math.abs(ep.y - sp.y);
+						g.drawRect(Math.min(sp.x, ep.x), Math.min(sp.y, ep.y), width, height);// 그리다
+					}
+				}
+				if (startP != null)
+					g.drawRect(Math.min(startP.x, endP.x), Math.min(startP.y, endP.y), width, height);
+			}
+			
+//circle
+			if (option == CIRCLE) {
+				if (sv.size() != 0) {
+					for (int i = 0; i < se.size(); i++) { // 벡터크기만큼
+						Point sp = sv.get(i); // 벡터값을꺼내다
+						Point ep = se.get(i);
+						g.drawLine(sp.x, sp.y, ep.x, ep.y);// 그리다
+					}
+				}
+
+				if (sv1.size() != 0) {
+					for (int i = 0; i < se1.size(); i++) { // 벡터크기만큼
+						Point sp = sv1.get(i); // 벡터값을꺼내다
+						Point ep = se1.get(i);
+						int width = Math.abs(ep.x - sp.x);
+						int height = Math.abs(ep.y - sp.y);
+						g.drawRect(Math.min(sp.x, ep.x), Math.min(sp.y, ep.y), width, height);// 그리다
+					}
+				}
+				if (sv2.size() != 0) {
+					for (int i = 0; i < se2.size(); i++) { // 벡터크기만큼
+						Point sp = sv2.get(i); // 벡터값을꺼내다
+						Point ep = se2.get(i);
+						int width = Math.abs(ep.x - sp.x);
+						int height = Math.abs(ep.y - sp.y);
+						g.drawOval(Math.min(sp.x, ep.x), Math.min(sp.y, ep.y), width, height);// 그리다
+					}
+				}
+				if (startP != null)
+					g.drawOval(Math.min(startP.x, endP.x), Math.min(startP.y, endP.y), width, height);
+				
+			}
+		}
+
+		class MyMouseListener extends MouseAdapter implements MouseMotionListener {
+			public void mousePressed(MouseEvent e) {
+				startP = e.getPoint();
+				if (option == LINE) {
+					sv.add(e.getPoint()); // 클릭한부분을 시작점으로
+				}
+				if (option == RECT) {
+					sv1.add(e.getPoint()); // 클릭한부분을 시작점으로
+				}
+				if (option == CIRCLE) {
+					sv2.add(e.getPoint()); // 클릭한부분을 시작점으로
+				}
+			}
+
+			public void mouseReleased(MouseEvent e) {
+				if (option == LINE) {
+					se.add(e.getPoint()); // 드래그 한부분을 종료점으로
+				}
+				if (option == RECT) {
+					se1.add(e.getPoint()); // 드래그 한부분을 종료점으로
+				}
+				if (option == CIRCLE) {
+					se2.add(e.getPoint()); // 드래그 한부분을 종료점으로
+				}
+				mode.add(option);
+				endP = e.getPoint();
+				repaint(); // 다시그려라
+			}
+
+			public void mouseDragged(MouseEvent e) {
+				endP = e.getPoint();
+				width = Math.abs(endP.x - startP.x);
+				height = Math.abs(endP.y - startP.y);
+
+				repaint();
+			}
+
+			public void mouseMoved(MouseEvent e) {
+
+			}
+		}
+
+	}
+
+	public static void main(String[] args) {
+		new LineDrawEx();
+	}
+}

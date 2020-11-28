@@ -1,0 +1,2 @@
+module MyJFrame.java {
+}

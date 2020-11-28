@@ -1,0 +1,237 @@
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.EventQueue;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.util.Vector;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+
+public class Drawer extends JPanel implements MouseListener, MouseMotionListener{
+	private JPanel contentPane;
+	int cur1, cur2;
+	int prev1, prev2;
+	Color color=Color.BLACK;
+	int option;
+	
+	Vector<Point> ptr1=new Vector<Point>();
+	Vector<Point> ptr2=new Vector<Point>();
+	Vector<Integer> opt_vector=new Vector<Integer>();
+	Vector<Color> col_pen=new Vector<Color>();
+	
+	public static final int DRAW=1;
+	public static final int THICK=2;
+	public static final int LINE=3;
+	public static final int RECT=4;
+	public static final int CIRCLE=5;
+	public static final int COLORS=6;
+	public static final int CLEAR=7;
+	public static final int RESIZE=8;
+	public static final int REDO=9;
+	
+	public static void main(String[] args) {
+		JFrame frame = new JFrame();
+		frame.setTitle("Copyrightsⓒ.YunseoChoi.All Rights Reserved."); 
+		frame.setSize(600,600);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		Drawer ged = new Drawer();
+		Container contentPane = frame.getContentPane();
+		contentPane.add(ged);
+		contentPane.add(ged.contentPane);
+		frame.setVisible(true);
+	}
+	
+	public void draw_prev(Graphics gp) {
+		for(int i=0; i<ptr1.size(); i++) {
+			Point p=ptr1.get(i);
+			Point p2=ptr2.get(i);
+			int opt=opt_vector.get(i);
+			Color tempcolor=col_pen.get(i);
+			
+			gp.setColor(tempcolor);
+			
+			if(opt==DRAW) {
+				gp.drawLine(p.x, p.y, p2.x, p2.y);
+			}
+			
+			else if(opt==LINE) {
+				gp.drawLine(p.x, p.y, p2.x, p2.y);
+			}
+			
+			else if(opt==RECT) {
+				gp.drawRect(Math.min(p.x, p2.x), Math.min(p.y, p2.y), Math.abs(p.x - p2.x), Math.abs(p2.y - p.y));
+			}
+			
+			else if(opt==CIRCLE) {
+				gp.drawOval(Math.min(p.x, p2.x), Math.min(p.y, p2.y), Math.abs(p.x - p2.x), Math.abs(p2.y - p.y));;
+			}
+		}
+	}
+	public void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		draw_prev(g);
+		g.setColor(color);
+		if(option==DRAW) {
+			g.drawLine(prev1, prev2, cur1, cur2);
+		}
+		
+		if(option==LINE) {
+			g.drawLine(prev1, prev2, cur1, cur2);
+		}
+		
+		else if(option==RECT) {
+			g.drawRect(Math.min(prev1, cur1), Math.min(prev2, cur2), Math.abs(prev1 - cur1), Math.abs(cur2 - prev2));
+		}
+		
+		else if(option==CIRCLE) {
+			g.drawOval(Math.min(prev1, cur1), Math.min(prev2, cur2), Math.abs(prev1-cur1), Math.abs(cur2-prev2));
+		}
+	}
+	
+	public GraphicEd() {
+
+		setBounds(100, 100, 563, 402);
+		addMouseMotionListener(this);
+		addMouseListener(this);
+		contentPane=new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(null);
+		
+		//그리기 연산들
+		JButton btnNewButton = new JButton("✎");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				option=DRAW;
+			}
+		});
+		btnNewButton.setFont(new Font("Lucida Grande", Font.PLAIN, 25));
+		btnNewButton.setBounds(34, 37, 46, 41);
+		contentPane.add(btnNewButton);
+		
+		JButton btnClear = new JButton("○");
+		btnClear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				option=CIRCLE;
+			}
+		});
+		btnClear.setFont(new Font("Lucida Grande", Font.PLAIN, 26));
+		btnClear.setBounds(278, 37, 59, 41);
+		contentPane.add(btnClear);
+		
+		JButton button = new JButton("＼");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				option=LINE;
+			}
+		});
+		button.setFont(new Font("Lucida Grande", Font.PLAIN, 15));
+		button.setBounds(149, 37, 70, 41);
+		contentPane.add(button);
+		
+		JButton btnNewButton_2 = new JButton("□");
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				option=RECT;
+			}
+		});
+		btnNewButton_2.setFont(new Font("Lucida Grande", Font.PLAIN, 30));
+		btnNewButton_2.setBounds(219, 36, 59, 41);
+		contentPane.add(btnNewButton_2);
+		
+		//속성 설정 
+		JButton button_2 = new JButton("ㅡ");
+		button_2.setFont(new Font("Lucida Grande", Font.PLAIN, 26));
+		button_2.setBounds(80, 37, 70, 41);
+		contentPane.add(button_2);
+		
+		JButton btnNewButton_3 = new JButton("COLORS");
+		btnNewButton_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				color=JColorChooser.showDialog(null, "COLORS", Color.BLUE);
+			}
+		});
+		btnNewButton_3.setBounds(337, 37, 70, 41);
+		contentPane.add(btnNewButton_3);
+		
+		//부가기능 
+		JButton btnColor = new JButton("CLR");
+		btnColor.setFont(new Font("Lucida Grande", Font.PLAIN, 20));
+		btnColor.setBounds(407, 37, 59, 39);
+		contentPane.add(btnColor);
+		
+		JButton btnNewButton_1 = new JButton("←");
+		btnNewButton_1.setBounds(6, 6, 36, 29);
+		contentPane.add(btnNewButton_1);
+		
+		JButton button_1 = new JButton("→");
+		button_1.setBounds(54, 6, 36, 29);
+		contentPane.add(button_1);
+		
+		JButton btnRe = new JButton("Resize");
+		btnRe.setFont(new Font("Lucida Grande", Font.PLAIN, 14));
+		btnRe.setBounds(466, 36, 59, 39);
+		contentPane.add(btnRe);
+		
+		JPanel panel = new JPanel();
+		panel.setBounds(6, 87, 551, 302);
+		contentPane.add(panel);
+	}
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		cur1=e.getX();
+		cur2=e.getY();
+		repaint();
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		prev1=e.getX();
+		prev2=e.getY();
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		Point temp1=new Point();
+		Point temp2=new Point();
+		Color temp_color=new Color(color.getRGB());
+		
+		temp1.x=prev1;
+		temp1.y=prev2;
+		temp2.x=cur1;
+		temp2.y=cur2;
+		
+		ptr1.add(temp1);
+		ptr2.add(temp2);
+		opt_vector.add(option);
+		col_pen.add(temp_color);
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+	}
+}
